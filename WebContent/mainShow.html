@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>主界面</title>
+<script type="text/javascript">
+	//此处注意
+	var num = 0;     //控制头像改变    
+	var text = document.getElementById('text');
+	var content = document.getElementsByTagName('ul')[0];
+	var member=null;
+	var lastInfo=null;
+	//此处注意
+	window.onload = function () {
+		//变量初始化
+		num=0;
+		text = document.getElementById('text');
+		content = document.getElementsByTagName('ul')[0];
+		member=null;
+		lastInfo=null;
+
+		ajaxSend();
+		linkWebSocket(0,"");
+	}
+	var websocket = null;
+	function linkWebSocket(operation,value){
+		switch(operation){
+			case 0:link();break;
+			case 1:sendMessage();break;
+			case 2:send(value);break;
+		}
+
+		function link(){
+			//判断当前浏览器是否支持WebSocket  
+			if ('WebSocket' in window) {
+				var userName=document.getElementById("me").value;
+				var url="ws://172.17.1.169:8080/chat/WebSocket/"+userName;
+				websocket = new WebSocket(url);
+			}  
+			else {  
+				alert('当前浏览器不支持websocket');
+			}
+		}
+		
+		//连接发生错误的回调方法  
+		websocket.onerror = function () {  
+			//setMessageInnerHTML("WebSocket连接发生错误");
+			//alert("WebSocket连接发生错误");
+		};
+		//连接成功建立的回调方法  
+		websocket.onopen = function () {  
+			//setMessageInnerHTML("WebSocket连接成功");
+			//alert("WebSocket连接成功")
+		}
+		//接收到消息的回调方法  
+		websocket.onmessage = function (event) {  
+			//setMessageInnerHTML(event.data);
+			//alert(event.data);
+			content = document.getElementsByTagName('ul')[0];
+			content.innerHTML += '<li style="float:left"><span style="float:left;text-align:left;">'+event.data+'</span></li>';
+			content.scrollTop=content.scrollHeight;
+		}
+		//连接关闭的回调方法  
+		websocket.onclose = function () {  
+			//setMessageInnerHTML("WebSocket连接关闭");
+			//alert("WebSocket连接关闭")
+		}
+		//监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。  
+		window.onbeforeunload = function () {
+			closeWebSocket();  
+		}
+		//将消息显示在网页上  
+		function setMessageInnerHTML(innerHTML) {
+			document.getElementById('message').innerHTML += innerHTML + '<br/>';  
+		}  
+		//关闭WebSocket连接  
+		function closeWebSocket() {  
+			websocket.close();  
+		}
+		//发送消息  
+		function sendMessage() {
+			var message = document.getElementById('text').value;
+			content = document.getElementsByTagName('ul')[0];
+			var anotherName = document.getElementById("anotherName").value;
+			var me = document.getElementById("me").value;
+			if(message=='')
+				alert("发送内容不可为空");
+			else{
+				var msg="发送消息:"+me+":"+anotherName+":"+message;
+				var info=getTimeInfo(message);
+				var value=null;
+				if(lastInfo==null){
+					value='<li class="timePattern">'+info.time.hours+":"+info.time.minutes+'</li>';
+				} else {
+					value=getTime(info,lastInfo);
+				}
+				lastInfo=info;
+				send(msg);
+				if(!(value==""))
+					content.innerHTML+=value;
+				content.innerHTML += '<li style="float:right"><span style="float:right"><xmp>'+message+'</xmp></span></li>';
+				content.scrollTop=content.scrollHeight;
+				var text=document.getElementById("text");
+				text.value='';
+			}
+		}
+		function send(message){
+			if(message=='')
+				alert("发送内容不可为空");
+			else{
+				websocket.send(message);
+			}
+		}
+		function getTimeInfo(message){
+			var date = new Date();
+			var info = new Object();
+			var time = new Object();
+			info.time=time;
+			info.content=message;
+
+			time.date=date.getDate();
+			time.day=date.getDay();
+			time.hours=date.getHours();
+			time.minutes=date.getMinutes();
+			time.month=date.getMonth();
+			time.seconds=date.getSeconds();
+			time.time=date.getTime();
+			time.timezoneOffset=date.getTimezoneOffset();
+			time.year=date.getFullYear();
+
+			return info;
+		}
+	}
+	document.onkeyup = function(e){      //onkeyup是javascript的一个事件、当按下某个键弹起
+		var _key;
+		if (e == null) { // ie  
+			_key = event.keyCode;  
+		} else {
+			_key = e.which;
+		}
+		if(_key == 13){
+			document.getElementById("button").onclick();
+		}
+	}
+	function choose(divone){
+		var divs=document.getElementsByClassName("divPattern");
+		var number=divone.id;
+		for (var i = divs.length - 1; i >= 0; i--) {
+			divs[i].style.backgroundColor="white";
+			divs[i].isChoose=0;
+		}
+		divone.style.backgroundColor="gray";
+		alert(divone.friendName);
+		divone.isChoose=1;
+		document.getElementById("another").innerHTML=member.friends[number].user.name;
+		document.getElementById("anotherName").value=member.friends[number].user.name;
+		var message="连接:"+member.friends[number].user.name;
+		linkWebSocket(2,message);
+		getInfo(member.friends[number].user.name);
+		document.getElementById("text").disabled = false;
+	}
+	//初始化成员数据
+	function ajaxSend(){
+		var xmlHttp=getXMLHttp();
+		xmlHttp.onreadystatechange=function()
+		{
+			if (xmlHttp.readyState==4 && xmlHttp.status==200)
+			{
+				var json=xmlHttp.responseText;
+				member=eval("("+json+")");
+				document.getElementById("userName").innerHTML=member.user.name;
+				document.getElementById("me").value=member.user.name;
+				var friends=member.friends;
+				for (var i = 0 ; i < friends.length ; i++) {
+					var friendName=friends[i].user.name;
+					var friendInfo="<div isChoose=0 class=divPattern "+"friendName="+friendName+"  onclick=choose(this) "+
+									"id='"+i+"' >"+
+									"<h4 class='friendH4'><xmp>"+
+									friendName+"</xmp></h4>"+"<input type='hidden' id='"+
+									(i+1)+"' value='"+friendName+"'>"+
+									"</div>";
+					alert(friendInfo);
+					document.getElementById("friends").innerHTML+=friendInfo;
+				}
+			}
+		}
+		xmlHttp.open("POST","UserService",false);
+		xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		xmlHttp.send("operation=init");
+	}
+	function getXMLHttp(){
+		var xmlhttp;
+		if (window.XMLHttpRequest)
+		{
+			//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+			xmlhttp=new XMLHttpRequest();
+		}
+		else
+		{
+			// IE6, IE5 浏览器执行代码
+			xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+		}
+		return xmlhttp;
+	}
+	function getInfo(name){
+		var xmlHttp=getXMLHttp();
+		xmlHttp.onreadystatechange=function()
+		{
+			if (xmlHttp.readyState==4 && xmlHttp.status==200)
+			{
+				var myName = document.getElementById("me").value;
+				var text = xmlHttp.responseText;
+				var infos = eval("("+text+")");
+				content.innerHTML="";
+				if(infos.length>0){
+					content.innerHTML='<li class="timePattern">'+infos[0].time.month+"月"+infos[0].time.date+"日"+infos[0].time.hours+":"+infos[0].time.minutes+'</li>';
+					lastInfo=infos[infos.length-1];
+					for (var i = 0; i < infos.length; i++) {
+						if(i>0){
+							var value=getTime(infos[i],infos[i-1]);
+							if(!(value==""))
+								content.innerHTML+=value;
+						}
+						if(infos[i].userOne == myName)
+							content.innerHTML += '<li style="float:right"><span style="float:right;white-space:normal;">'+infos[i].content+'</span></li>';
+						else
+							content.innerHTML += '<li style="float:left;"><span style="float:left;white-space:normal;">'+infos[i].content+'</span></li>';
+					}
+					content.scrollTop=content.scrollHeight;
+				}
+			}
+		}
+		xmlHttp.open("POST","UserService",true);
+		xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+		xmlHttp.send("operation=getInfo&anotherName="+name);
+	}
+	function getTime(info,infoFormer){
+		if(info.time.month>infoFormer.time.month||info.time.date>infoFormer.time.date){
+			return '<li class="timePattern">'+info.time.month+"月"+info.time.date+"日"+info.time.hours+":"+info.time.minutes+'</li>';
+		}
+		if(info.time.hours>infoFormer.time.hours||info.time.minutes-infoFormer.time.minutes>2){
+			return '<li class="timePattern">'+info.time.hours+":"+info.time.minutes+'</li>';
+		}
+		return "";
+	}
+</script>
+<link rel="stylesheet" type="text/css" href="css/form1.css">
+<link rel="stylesheet" type="text/css" href="css/form2.css">
+<style type="text/css">
+	.divPattern{
+		border: 1px solid black;
+		position: relative;
+		height: 40px;
+		width: 95%;
+		line-height: 40px;
+		cursor: pointer;
+		background-color: white;
+		float:right;
+	}
+	.friendH4{
+		font-weight:normal;
+		float:left;
+	}
+	.timePattern{
+		margin: 0 auto;
+		font-size:10px;
+	}
+</style>
+</head>
+<body style="background-image:url('background/3.jpg');">
+	<div class="parent" style="height:80%;width:80%;">
+		<div id="myInfo" style="position:relative;float:left;width:25%;height:100%;">
+			<div id="baseInfo" style="position:relative;height:15%;width:100%">
+				<h3 style="font-size:40px;"><xmp id="userName"></xmp></h3>
+				<input type="hidden" id="me">
+			</div>
+			<div id="friends" style="height:82%;overflow-x:auto;width:100%;">
+				<!-- 朋友 -->
+			</div>
+		</div>
+		<div style="width:73%;height:100%;position:relative;float:right;">
+			<div style="width:100%;height:60px;position:relative;font-size:25px;text-align:left;vertical-align:middle;line-height:60px;">
+				<p id="another"></p>
+				<input type="hidden" id="anotherName" value="">
+			</div>
+			<HR style="FILTER: alpha(opacity=100,finishopacity=0,style=2)" width="85%" color=black SIZE=1>
+			<ul class="content" style="position: relative;float:center;width:87%;height:63%;"></ul>
+			<div style="width: 100%;height: 17%;position: relative;vertical-align: middle;text-align: center;float:right;">
+				<div style="width:90%;height:100%;float:left;">
+					<textarea id="text" placeholder="请输入内容" style="height:100%;width:97%;position: relative;" disabled="true"></textarea>
+				</div>
+				<div class="parent" style="position:relative;float:right;width:10%;height:100%;background:0;">
+					<p style="bottom:0px;"><input type="submit" id="button" onclick="linkWebSocket(1,'');" id="send" value="发送" style="height:30%;width:50px;top:50%;margin-top:15%;"></p>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

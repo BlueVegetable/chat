@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />     
+	<meta name="apple-mobile-web-app-capable" content="yes" />    
+	<meta name="format-detection" content="telephone=no" /> 
+	<title>蓝菜聊天室登录</title>
+	<style type="text/css">
+		td{
+			font-size: 15px;
+		}
+		.buttonPattern {  
+        	width: 50px;
+        	height:25px;
+        	padding:3px;  
+        	background-color: #428bca;  
+        	border-color: #357ebd;  
+        	color: #fff;  
+        	-moz-border-radius: 10px;  
+        	-webkit-border-radius: 10px;  
+        	border-radius: 10px; /* future proofing */  
+        	-khtml-border-radius: 10px; /* for old Konqueror browsers */  
+        	text-align: center;  
+        	vertical-align: middle;  
+        	border: 1px solid transparent;  
+        	font-weight: 20;  
+        	font-size:14px;
+        	overflow: hidden;
+        	cursor:pointer;
+      	}
+      	a{
+      		color: gray;
+      		text-decoration: none;
+      		font-size: 3px;
+      	}
+		.parent{
+			width:30%;
+			height: 40%;
+			/* 以下属性垂直居中 */
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			margin: auto;
+			background-color: white;
+			background: rgba(255,255,255,0.4);
+			text-align: center;
+			vertical-align: middle;
+			font-size: 20px;
+		}
+		body{  
+			margin: 0;  
+			background-image: url('background/1.jpg');
+			background-repeat:no-repeat;  
+			background-position:0% 0%;  
+			background-size:cover;
+			background-color: #22C3AA;
+		}
+	@media only screen and (max-width: 400px) {
+		.parent{
+			width:80%;
+			height:40%;
+		}
+    	body {
+        	background-image: url('background/2.jpg');
+    	}
+    }
+	</style>
+	<script language="javascript" src="scripts/jquery-1.4.1.min.js"></script>
+	<script type="text/javascript">
+		function judge1(){
+			var name=document.getElementById("userName").value;
+			var namePattern=/^(.){1,20}$/
+			if(!namePattern.test(name)){
+				document.getElementById("msg").innerHTML="您的名称输入错误,应输入1-20位任意字符";
+				return false;
+			}
+			return true;
+		}
+		function judge2(){
+			var password=document.getElementById("password").value;
+			var passwordPattern=/^(.){1,40}$/
+			if(!passwordPattern.test(password)){
+				document.getElementById("msg").innerHTML="密码格式为1-40位任意字符";
+				return false;
+			}
+			return true;
+		}
+		function reset(){
+			document.getElementById("msg").innerHTML="";
+		}
+		function judge(){
+			if(!judge1())
+				return false;
+			if(!judge2())
+				return false;
+			send();
+			return true;
+		}
+		function send(){
+			var xmlHttp=getXMLHttp();
+			xmlHttp.onreadystatechange=function()
+			{
+				if (xmlHttp.readyState==4 && xmlHttp.status==200)
+				{
+					if(xmlHttp.responseText=="success")
+						window.location.href="mainShow.html";
+					document.getElementById("msg").innerHTML=xmlHttp.responseText;
+				}
+			}
+			xmlHttp.open("POST","UserService",true);
+			xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+			var userName=document.getElementById("userName").value;
+			var password=document.getElementById("password").value;
+			xmlHttp.send("userName="+userName+"&password="+password+"&operation=login");
+		}
+		function getXMLHttp(){
+			var xmlhttp;
+			if (window.XMLHttpRequest)
+			{
+				//  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+			else
+			{
+				// IE6, IE5 浏览器执行代码
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			return xmlhttp;
+		}
+	</script>
+</head>
+<body>
+	<div class="parent">
+		<h3 style="color:blue;">用户登录</h3>
+		<div width="100%" text-align="center">
+			<table position="relative" width="100%" height="100%" style="border-spacing: 10px;">
+				<tr>
+					<td width="30%" style="text-align:right;">用户名:</td>
+					<td style="text-align:left;"><input type="text" id="userName" name="name" placeholder="请输入用户名"style="height:20px;width:80%;" onblur="judge1();" onfocus="reset();"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">密码:</td>
+					<td style="text-align:left;"><input type="password" id="password" name="password" placeholder="请输入密码" style="height:20px;width:80%;"></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<input type="submit" value="登录" class="buttonPattern" onclick="return judge();">
+						<input type="submit" value="注册" class="buttonPattern">
+						<a href="#">忘记密码</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<h6 style="margin: 0px;font-weight:normal;color:red;" id="msg"></h6>
+	</div>
+</body>
+</html>
