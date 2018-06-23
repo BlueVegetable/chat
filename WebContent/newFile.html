@@ -2,11 +2,25 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>试验网页</title>
+<script type="text/javascript">
+	window.onload = function (){
+		if(isMobile())
+			alert("手机端");
+		else
+			alert("电脑端");
+	}
+	function isMobile(){
+		if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))
+			return true;
+		else
+			return false;
+	}
+</script>
 </head>
 <body>
 <div style="width:500px;height:500px;">
-<span style="color:yellow;background-color:black;height:100%;width:100%;border:1px solid blue;">我们</span>
+	<h1 id="1">1</h1>
 </div>
 </body>
 </html>

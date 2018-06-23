@@ -37,7 +37,7 @@
 				var url="ws://172.17.1.169:8080/chat/WebSocket/"+userName;
 				websocket = new WebSocket(url);
 			}  
-			else {  
+			else {
 				alert('当前浏览器不支持websocket');
 			}
 		}
@@ -189,7 +189,7 @@
 									friendName+"</h4>"+"<input type='hidden' id='"+
 									(i+1)+"' value='"+friendName+"'>"+
 									"</div>";
-					document.getElementById("friends").innerHTML+=friendInfo;
+					document.getElementById("messagesWith").innerHTML+=friendInfo;
 				}
 			}
 		}
@@ -252,6 +252,15 @@
 		}
 		return "";
 	}
+	//查看消息
+	function lookMessage(a){
+		var partDiv=document.getElementsByClassName("partDiv");
+		for (var i = partDiv.length - 1; i >= 0; i--) {
+			partDiv[i].style.display="none";
+		}
+		document.getElementById("messagesWith").style.display="block";
+		a.style.background="url('background/7.jpg')";
+	}
 </script>
 <link rel="stylesheet" type="text/css" href="css/form1.css">
 <link rel="stylesheet" type="text/css" href="css/form2.css">
@@ -274,6 +283,17 @@
 		margin: 0 auto;
 		font-size:10px;
 	}
+	.mainDiv{
+		background-repeat: no-repeat;
+		cursor: pointer;
+	}
+	.partDiv{
+		height:100%;
+		width:85%;
+		float:right;
+		overflow-x:auto;
+		display:none;
+	}
 </style>
 </head>
 <body style="background-image:url('background/3.jpg');">
@@ -283,8 +303,24 @@
 				<h3 style="font-size:40px;"><xmp id="userName"></xmp></h3>
 				<input type="hidden" id="me">
 			</div>
-			<div id="friends" style="height:82%;overflow-x:auto;width:100%;">
-				<!-- 朋友 -->
+			<div style="height:82%;">
+				<div style="height:100%;width:15%;float:left;">
+					<div class="mainDiv" style="background:url('background/6.jpg');background-size:100%;height:40px;background-position:0 0 310px 370px;background-repeat: no-repeat;" onclick="lookMessage(this)">
+					</div>
+					<div>
+					</div>
+					<div>
+					</div>
+				</div>
+				<div id="messagesWith" class="partDiv" style="display:block;">
+					<!-- 朋友 -->
+				</div>
+				<div id="friends" class="partDiv">
+					<div>
+						新的朋友
+					</div>
+					<HR>
+				</div>
 			</div>
 		</div>
 		<div style="width:73%;height:100%;position:relative;float:right;">
