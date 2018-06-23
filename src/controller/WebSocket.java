@@ -65,7 +65,7 @@ public class WebSocket {
 			}
 			if(webSockets.containsKey(anotherName)) {
 				Session sessionAnother=webSockets.get(anotherName).getSession();
-				sessionAnother.getBasicRemote().sendText(info.getContent());
+				sessionAnother.getBasicRemote().sendText(userName+":"+info.getContent());
 			}
 			RecorderInfo.add(info);
 			break;

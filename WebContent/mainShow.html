@@ -57,10 +57,20 @@
 			//setMessageInnerHTML(event.data);
 			//alert(event.data);
 			content = document.getElementsByTagName('ul')[0];
-			content.innerHTML += '<li style="float:left"><span style="float:left;text-align:left;">'+event.data+'</span></li>';
-			content.scrollTop=content.scrollHeight;
+
+			//传回来的数据结构为(对方名称:信息)
+			var data=event.data;
+			var value=data.split(":");
+			var anotherName=value[0];
+			var message=value[1];
+			var divs=document.getElementsByClassName("divPattern");
+			for (var i = divs.length - 1; i >= 0; i--) {
+				if((divs[i].getAttribute("isChoose")==1)&&(divs[i].getAttribute("friendName")==anotherName))
+					content.innerHTML += '<li style="float:left"><span style="float:left;text-align:left;">'+message+'</span></li>';
+				content.scrollTop=content.scrollHeight;
+			}
 		}
-		//连接关闭的回调方法  
+		//连接关闭的回调方法
 		websocket.onclose = function () {  
 			//setMessageInnerHTML("WebSocket连接关闭");
 			//alert("WebSocket连接关闭")
@@ -98,7 +108,7 @@
 				send(msg);
 				if(!(value==""))
 					content.innerHTML+=value;
-				content.innerHTML += '<li style="float:right"><span style="float:right"><xmp>'+message+'</xmp></span></li>';
+				content.innerHTML += '<li style="float:right"><span style="float:right;text-align:left;">'+message+'</span></li>';
 				content.scrollTop=content.scrollHeight;
 				var text=document.getElementById("text");
 				text.value='';
@@ -147,10 +157,10 @@
 		var number=divone.id;
 		for (var i = divs.length - 1; i >= 0; i--) {
 			divs[i].style.backgroundColor="white";
-			divs[i].isChoose=0;
+			divs[i].setAttribute("isChoose",0);
 		}
 		divone.style.backgroundColor="gray";
-		alert(divone.friendName);
+		divone.setAttribute("isChoose",1);
 		divone.isChoose=1;
 		document.getElementById("another").innerHTML=member.friends[number].user.name;
 		document.getElementById("anotherName").value=member.friends[number].user.name;
@@ -173,13 +183,12 @@
 				var friends=member.friends;
 				for (var i = 0 ; i < friends.length ; i++) {
 					var friendName=friends[i].user.name;
-					var friendInfo="<div isChoose=0 class=divPattern "+"friendName="+friendName+"  onclick=choose(this) "+
+					var friendInfo="<div isChoose=0 class='divPattern' "+"friendName="+friendName+"  onclick=choose(this) "+
 									"id='"+i+"' >"+
-									"<h4 class='friendH4'><xmp>"+
-									friendName+"</xmp></h4>"+"<input type='hidden' id='"+
+									"<h4 class='friendH4'>"+
+									friendName+"</h4>"+"<input type='hidden' id='"+
 									(i+1)+"' value='"+friendName+"'>"+
 									"</div>";
-					alert(friendInfo);
 					document.getElementById("friends").innerHTML+=friendInfo;
 				}
 			}
@@ -222,9 +231,9 @@
 								content.innerHTML+=value;
 						}
 						if(infos[i].userOne == myName)
-							content.innerHTML += '<li style="float:right"><span style="float:right;white-space:normal;">'+infos[i].content+'</span></li>';
+							content.innerHTML += '<li style="float:right"><span style="float:right;white-space:normal;text-align:left;">'+infos[i].content+'</span></li>';
 						else
-							content.innerHTML += '<li style="float:left;"><span style="float:left;white-space:normal;">'+infos[i].content+'</span></li>';
+							content.innerHTML += '<li style="float:left;"><span style="float:left;white-space:normal;text-align:left;">'+infos[i].content+'</span></li>';
 					}
 					content.scrollTop=content.scrollHeight;
 				}

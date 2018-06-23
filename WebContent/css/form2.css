@@ -126,7 +126,8 @@ img {
 	margin: 6px 10px 0 10px;    
 	max-width: 310px;    
 	border: 1px solid #ccc;    
-	box-shadow: 0 0 3px #ccc;    
+	box-shadow: 0 0 3px #ccc;
+	text-align:left;
 }    
 .content li img.imgleft {     
 	float: left;     
