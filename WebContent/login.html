@@ -107,7 +107,10 @@
 				if (xmlHttp.readyState==4 && xmlHttp.status==200)
 				{
 					if(xmlHttp.responseText=="success")
-						window.location.href="mainShow.html";
+						if(isMobile())
+							window.location.href="phoneShow.html";
+						else
+							window.location.href="mainShow.html";
 					document.getElementById("msg").innerHTML=xmlHttp.responseText;
 				}
 			}

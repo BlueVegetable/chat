@@ -32,7 +32,7 @@ public class Role {
 		case 1:role.setName("user");role.setTitle("普通用户");break;
 		case 2:role.setName("member");role.setTitle("会员");break;
 		case 3:role.setName("superMember");role.setTitle("超级会员");break;
-		case 4:role.setName("管理员");role.setTitle("超级管理员");break;
+		case 4:role.setName("admin");role.setTitle("超级管理员");break;
 		}
 		
 		return role;

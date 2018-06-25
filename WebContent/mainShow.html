@@ -93,7 +93,7 @@
 			content = document.getElementsByTagName('ul')[0];
 			var anotherName = document.getElementById("anotherName").value;
 			var me = document.getElementById("me").value;
-			if(message=='')
+			if(message==""||message==null)
 				alert("发送内容不可为空");
 			else{
 				var msg="发送消息:"+me+":"+anotherName+":"+message;
@@ -259,7 +259,25 @@
 			partDiv[i].style.display="none";
 		}
 		document.getElementById("messagesWith").style.display="block";
-		a.style.background="url('background/7.jpg')";
+		document.getElementById("friendTop").style.background="url('background/9.jpg')";
+		a.style.background="url('background/6.jpg')";
+
+		document.getElementById("chatActivity").style.display="block";
+		a.style.backgroundSize="cover";
+		document.getElementById("friendTop").style.backgroundSize="cover";
+	}
+	function lookFriend(a){
+		var partDiv=document.getElementsByClassName("partDiv");
+		for (var i = partDiv.length - 1; i >= 0; i--) {
+			partDiv[i].style.display="none";
+		}
+
+		document.getElementById("friends").style.display="block";
+		a.style.background="url('background/8.jpg')";
+		document.getElementById("messageTop").style.background="url('background/7.jpg')";
+		document.getElementById("chatActivity").style.display="none";
+		a.style.backgroundSize="cover";
+		document.getElementById("messageTop").style.backgroundSize="cover";
 	}
 </script>
 <link rel="stylesheet" type="text/css" href="css/form1.css">
@@ -286,6 +304,7 @@
 	.mainDiv{
 		background-repeat: no-repeat;
 		cursor: pointer;
+		background-size: cover;
 	}
 	.partDiv{
 		height:100%;
@@ -305,11 +324,9 @@
 			</div>
 			<div style="height:82%;">
 				<div style="height:100%;width:15%;float:left;">
-					<div class="mainDiv" style="background:url('background/6.jpg');background-size:100%;height:40px;background-position:0 0 310px 370px;background-repeat: no-repeat;" onclick="lookMessage(this)">
+					<div id="messageTop" class="mainDiv" style="background:url('background/6.jpg');height:40px;background-size: cover;-moz-background-size: cover;background-repeat: no-repeat;" onclick="lookMessage(this)">
 					</div>
-					<div>
-					</div>
-					<div>
+					<div id="friendTop" class="mainDiv" style="background:url('background/9.jpg');height:40px;background-size:cover;background-repeat: no-repeat;" onclick="lookFriend(this)">
 					</div>
 				</div>
 				<div id="messagesWith" class="partDiv" style="display:block;">
@@ -323,7 +340,7 @@
 				</div>
 			</div>
 		</div>
-		<div style="width:73%;height:100%;position:relative;float:right;">
+		<div id="chatActivity" style="width:73%;height:100%;position:relative;float:right;">
 			<div style="width:100%;height:60px;position:relative;font-size:25px;text-align:left;vertical-align:middle;line-height:60px;">
 				<p id="another"></p>
 				<input type="hidden" id="anotherName" value="">
