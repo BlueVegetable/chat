@@ -34,7 +34,7 @@
 			//判断当前浏览器是否支持WebSocket  
 			if ('WebSocket' in window) {
 				var userName=document.getElementById("me").value;
-				var url="ws://172.17.1.169:8080/chat/WebSocket/"+userName;
+				var url="ws://172.17.88.56:8080/chat/WebSocket/"+userName;
 				websocket = new WebSocket(url);
 			}  
 			else {
