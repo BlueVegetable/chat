@@ -2,25 +2,28 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,height=device-height,inital-scale=1.0,maximum-scale=1.0,user-scalable=no;">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
 <title>试验网页</title>
-<script type="text/javascript">
-	window.onload = function (){
-		if(isMobile())
-			alert("手机端");
-		else
-			alert("电脑端");
-	}
-	function isMobile(){
-		if(/Android|webOS|iPhone|iPod|BlackBerry/i.test(navigator.userAgent))
-			return true;
-		else
-			return false;
-	}
-</script>
+<link type="text/css" rel="styleSheet"  href="css/form3.css" />
 </head>
 <body>
-<div style="width:500px;height:500px;">
-	<h1 id="1">1</h1>
+<div class="content" style="border:1px solid red;">
+	<div class="longin-boder">
+		<div class="image"><img src="icon/user.png" style="width:30px;height:30px;"></div>
+		<input class="input" type="text" placeholder="输入用户名"/>
+	</div> 
+	<!--End用户名输入框-->
+	<div class="longin-boder">
+		<div class="image"><img src="icon/key.png" style="width:30px;height:30px;"></div>
+		<input class="input" type="password" placeholder="输入密码"/>
+	</div>
+	<!--End密码输入框-->
+	<div>
+		<div class="button">登录</div>
+	</div>
 </div>
 </body>
 </html>
