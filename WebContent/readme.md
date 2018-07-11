@@ -1,4 +1,4 @@
-#chat聊天室
+# chat聊天室
 ## register 注册环节
 1. login.html 跳转到 register.html->无后台交互
 2. register.html 传递的参数
